@@ -30,19 +30,23 @@ class Reddit:
         latest_post = self.data['data']['children'][0]['data']
         author_name = latest_post['author']
         title = latest_post['link_title']
-        title_link = 'https://reddit.com' + latest_post['permalink']
+        title_link = latest_post['link_url']
         text = latest_post['body']
         footer = latest_post['subreddit_name_prefixed']
+        footer_icon = 'https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png'
         ts = latest_post['created_utc']
+        pretext = f'https://reddit.com{latest_post["permalink"]}'
 
         # build message
         message = {
-            "author_name": author_name,
-            "title": title,
-            "title_link": title_link,
-            "text": text,
-            "footer": footer,
-            "ts": ts
+            'pretext': pretext,
+            'author_name': f'u/{author_name}',
+            'title': title,
+            'title_link': title_link,
+            'text': text,
+            'footer': footer,
+            'footer_icon': footer_icon,
+            'ts': ts
         }
 
         # attach to output

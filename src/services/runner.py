@@ -1,6 +1,7 @@
 #import from application
 from services.slack import Slack
 from social.reddit import Reddit
+from social.twitter import Twitter
 
 class Runner:
     def __init__(self, channel, user):
@@ -12,6 +13,8 @@ class Runner:
         # run social channel specific methods
         if self.channel == 'reddit':
             social = Reddit(self.user)
+        elif self.channel == 'twitter':
+            social = Twitter(self.user)
         else:
             return
 

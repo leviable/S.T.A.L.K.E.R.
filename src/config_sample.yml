@@ -1,6 +1,15 @@
 social_channels:
   reddit:
     # - "username"
+  twitter:
+    # - "username"
 
 slack:
-  webhook_url: ''
+  webhook_url: ""
+
+twitter:
+  api_key: ""
+  secret_key: ""
+
+app:
+  sleep_time: 2000

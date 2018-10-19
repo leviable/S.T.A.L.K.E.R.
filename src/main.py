@@ -18,12 +18,10 @@ def main():
 
     # start a runner for each user in a channel
     for channel, users in social_channels.items():
-        if not isinstance(users, list):
-            break
-
-        for user in users:
-            runner = Runner(channel, user)
-            runner.stalk()
+        if isinstance(users, list):
+            for user in users:
+                runner = Runner(channel, user)
+                runner.stalk()
 
 while True:
     main()

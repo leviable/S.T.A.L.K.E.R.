@@ -1,0 +1,6 @@
+social_channels:
+  reddit:
+    # - "username"
+
+slack:
+  webhook_url: ''

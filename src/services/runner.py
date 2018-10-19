@@ -4,12 +4,16 @@ from social.reddit import Reddit
 from social.twitter import Twitter
 
 class Runner:
+
     def __init__(self, channel, user):
+
+        # store user and channel
         self.channel = channel
         self.user = user
         self.slack = Slack()
 
     def stalk(self):
+
         # run social channel specific methods
         if self.channel == 'reddit':
             social = Reddit(self.user)
@@ -18,13 +22,15 @@ class Runner:
         else:
             return
 
-        # attempt scrape
         try:
+            # attempt scrape
             social.scrape()
-        except:
-            print('error scraping')
+        except Exception as e:
+            # report error
+            self.slack.post({ 'text': e })
 
-        # if post is new build message and post to slack
+        # if post is new build message
+        # and post to slack
         if social.is_new():
             message = social.message()
             self.slack.post(message)

@@ -1,7 +1,9 @@
-#import from dependencies
+# import from system
 import time
-import requests
 import json
+
+# iimport from dependencies
+import requests
 import yaml
 
 # import config
@@ -9,26 +11,34 @@ with open('config.yml', 'r') as config:
     config = yaml.load(config)
 
 class Reddit:
+
     def __init__(self, user):
+
+        # initialize class props
         self.user = user
         self.data = {}
 
     def scrape(self):
+
         # use unique headers for reddit throttling
         headers = { 'User-Agent': 'S.T.A.L.K.E.R. by mikeydunn' }
         url = f'https://www.reddit.com/user/{self.user}.json'
 
         # request users json
         response = requests.get(url, headers=headers)
-        self.data = response.json()
+        json = response.json()
+        self.data = json['data']['children'][0]['data']
 
+        # return stored data
         return self.data
 
     def message(self):
+
         # storing json objects for building message
         output = { 'attachments': [] }
-        latest_post = self.data['data']['children'][0]['data']
-        author_name = latest_post['author']
+        latest_post = self.data
+        screen_name = latest_post['author']
+        author_name = f'u/{screen_name}'
         title = latest_post['link_title']
         title_link = latest_post['link_url']
         text = latest_post['body']
@@ -40,7 +50,7 @@ class Reddit:
         # build message
         message = {
             'pretext': pretext,
-            'author_name': f'u/{author_name}',
+            'author_name': author_name,
             'title': title,
             'title_link': title_link,
             'text': text,
@@ -49,19 +59,20 @@ class Reddit:
             'ts': ts
         }
 
-        # attach to output
+        # append message to slack attachments field
         output['attachments'].append(message)
 
-        # return slack specific formatted message
+        # return formatted message
         return output
 
     def is_new(self):
+
         # if invalid dict return false
-        if 'data' not in self.data:
+        if 'created_utc' not in self.data:
             return False
 
         # calculate times for check
-        latest_post = self.data['data']['children'][0]['data']
+        latest_post = self.data
         post_time = latest_post['created_utc']
         current_time = time.time()
         sleep_time = config['app']['sleep_time']

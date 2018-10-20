@@ -11,16 +11,22 @@ import yaml
 with open('config.yml', 'r') as config:
     config = yaml.load(config)
 
+# module constants
+API_KEY = config['twitter']['api_key']
+SECRET_KEY = config['twitter']['secret_key']
+SLEEP_TIME = config['app']['sleep_time']
+TWITTER_API_URL = 'https://api.twitter.com/1.1/'
+TWITTER_API_TIMELINE_PATH = 'statuses/user_timeline.json'
+TWITTER_NAME = 'Twitter'
+TWITTER_ICON = 'https://abs.twimg.com/favicons/favicon.ico'
+TWITTER_TS_PATTERN = '%a %b %d %H:%M:%S %z %Y'
+
 class Twitter:
 
     def __init__(self, user):
 
-        # gather keys for client
-        api_key = config['twitter']['api_key']
-        secret_key = config['twitter']['secret_key']
-
         # build client and class props
-        self.client = Client(api_key, secret_key)
+        self.client = Client(API_KEY, SECRET_KEY)
         self.user = user
         self.data = {}
 
@@ -28,7 +34,7 @@ class Twitter:
 
         # build request url
         params = f'screen_name={self.user}&count=1&tweet_mode=extended'
-        url = f'https://api.twitter.com/1.1/statuses/user_timeline.json?{params}'
+        url = f'{TWITTER_API_URL}{TWITTER_API_TIMELINE_PATH}?{params}'
 
         # request users json
         response = self.client.request(url)
@@ -46,16 +52,13 @@ class Twitter:
         screen_name = latest_post['user']['screen_name']
         author_name = f'@{screen_name}'
         text = latest_post['full_text']
-        footer = 'Twitter'
-        footer_icon = 'https://abs.twimg.com/favicons/favicon.ico'
 
         # convert twitter time to epoch
         ts_twitter = latest_post['created_at']
-        ts_pattern = '%a %b %d %H:%M:%S %z %Y'
-        ts = int(time.mktime(time.strptime(ts_twitter, ts_pattern)))
+        ts = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
 
         # pretext base stored for retweet
-        pretext_base = 'https://twitter.com/TeamYouTube/status/'
+        pretext_base = 'https://twitter.com/{screen_name}/status/'
         pretext = f'{pretext_base}{tweet_id}'
 
         # overwrite with retweet info
@@ -74,8 +77,8 @@ class Twitter:
             'pretext': pretext,
             'author_name': author_name,
             'text': text,
-            'footer': footer,
-            'footer_icon': footer_icon,
+            'footer': TWITTER_NAME,
+            'footer_icon': TWITTER_ICON,
             'ts': ts
         }
 
@@ -94,11 +97,9 @@ class Twitter:
         # calculate times for check
         latest_post = self.data
         ts_twitter = latest_post['created_at']
-        ts_pattern = '%a %b %d %H:%M:%S %z %Y'
-        post_time = int(time.mktime(time.strptime(ts_twitter, ts_pattern)))
+        post_time = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
         current_time = time.time()
-        sleep_time = config['app']['sleep_time']
-        last_check_time = current_time - sleep_time
+        last_check_time = current_time - SLEEP_TIME
 
         # if the post time is larger, its newer than last check
         return True if post_time > last_check_time else False

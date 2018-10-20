@@ -2,6 +2,7 @@
 from services.slack import Slack
 from social.reddit import Reddit
 from social.twitter import Twitter
+from social.instagram import Instagram
 
 class Runner:
 
@@ -19,6 +20,8 @@ class Runner:
             social = Reddit(self.user)
         elif self.channel == 'twitter':
             social = Twitter(self.user)
+        elif self.channel == 'instagram':
+            social = Instagram(self.user)
         else:
             return
 

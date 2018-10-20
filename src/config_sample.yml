@@ -3,6 +3,8 @@ social_channels:
     # - "username"
   twitter:
     # - "username"
+  instagram:
+    # - "username"
 
 auth:
   slack:
@@ -10,6 +12,9 @@ auth:
   twitter:
     api_key: ""
     secret_key: ""
+  instagram:
+    username: ""
+    password: ""
 
 app:
   sleep_time: 2000

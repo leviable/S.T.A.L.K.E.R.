@@ -49,8 +49,7 @@ class Twitter:
         output = { 'attachments': [] }
         latest_post = self.data
         tweet_id = latest_post['id']
-        screen_name = latest_post['user']['screen_name']
-        author_name = f'@{screen_name}'
+        author_name = latest_post['user']['screen_name']
         text = latest_post['full_text']
 
         # convert twitter time to epoch

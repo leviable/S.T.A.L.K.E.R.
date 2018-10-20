@@ -12,8 +12,8 @@ with open('config.yml', 'r') as config:
     config = yaml.load(config)
 
 # module constants
-API_KEY = config['twitter']['api_key']
-SECRET_KEY = config['twitter']['secret_key']
+API_KEY = config['auth']['twitter']['api_key']
+SECRET_KEY = config['auth']['twitter']['secret_key']
 SLEEP_TIME = config['app']['sleep_time']
 TWITTER_API_URL = 'https://api.twitter.com/1.1/'
 TWITTER_API_TIMELINE_PATH = 'statuses/user_timeline.json'

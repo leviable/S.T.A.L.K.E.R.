@@ -4,12 +4,12 @@ social_channels:
   twitter:
     # - "username"
 
-slack:
-  webhook_url: ""
-
-twitter:
-  api_key: ""
-  secret_key: ""
+auth:
+  slack:
+    webhook_url: ""
+  twitter:
+    api_key: ""
+    secret_key: ""
 
 app:
   sleep_time: 2000

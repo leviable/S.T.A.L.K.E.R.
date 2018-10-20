@@ -39,13 +39,25 @@ class Reddit:
         latest_post = self.data
         screen_name = latest_post['author']
         author_name = f'u/{screen_name}'
-        title = latest_post['link_title']
-        title_link = latest_post['link_url']
-        text = latest_post['body']
         footer = latest_post['subreddit_name_prefixed']
         footer_icon = 'https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png'
         ts = latest_post['created_utc']
-        pretext = f'https://reddit.com{latest_post["permalink"]}'
+        permalink = latest_post["permalink"]
+        pretext = f'https://reddit.com{permalink}'
+
+        # if post_hint exists, use submission keys
+        if 'post_hint' in latest_post:
+            title = latest_post['title']
+            title_link = latest_post['url']
+            text = latest_post['selftext']
+            thumb_url = latest_post['thumbnail']
+
+        # else use comment keys
+        else:
+            title = latest_post['link_title']
+            title_link = latest_post['link_url']
+            text = latest_post['body']
+            thumb_url = ''
 
         # build message
         message = {
@@ -54,6 +66,7 @@ class Reddit:
             'title': title,
             'title_link': title_link,
             'text': text,
+            'thumb_url': thumb_url,
             'footer': footer,
             'footer_icon': footer_icon,
             'ts': ts

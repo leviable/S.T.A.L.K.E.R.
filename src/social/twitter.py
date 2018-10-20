@@ -57,7 +57,7 @@ class Twitter:
         ts = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
 
         # pretext base stored for retweet
-        pretext_base = 'https://twitter.com/{screen_name}/status/'
+        pretext_base = f'https://twitter.com/{author_name}/status/'
         pretext = f'{pretext_base}{tweet_id}'
 
         # overwrite with retweet info

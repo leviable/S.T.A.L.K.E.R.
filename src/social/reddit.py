@@ -10,6 +10,11 @@ import yaml
 with open('config.yml', 'r') as config:
     config = yaml.load(config)
 
+# module constants
+REDDIT_ICON = 'https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png'
+SLEEP_TIME = config['app']['sleep_time']
+REQ_HEADERS = { 'User-Agent': 'S.T.A.L.K.E.R. by mikeydunn' }
+
 class Reddit:
 
     def __init__(self, user):
@@ -21,11 +26,10 @@ class Reddit:
     def scrape(self):
 
         # use unique headers for reddit throttling
-        headers = { 'User-Agent': 'S.T.A.L.K.E.R. by mikeydunn' }
         url = f'https://www.reddit.com/user/{self.user}.json'
 
         # request users json
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=REQ_HEADERS)
         json = response.json()
         self.data = json['data']['children'][0]['data']
 
@@ -40,7 +44,6 @@ class Reddit:
         screen_name = latest_post['author']
         author_name = f'u/{screen_name}'
         footer = latest_post['subreddit_name_prefixed']
-        footer_icon = 'https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png'
         ts = latest_post['created_utc']
         permalink = latest_post["permalink"]
         pretext = f'https://reddit.com{permalink}'
@@ -68,7 +71,7 @@ class Reddit:
             'text': text,
             'thumb_url': thumb_url,
             'footer': footer,
-            'footer_icon': footer_icon,
+            'footer_icon': REDDIT_ICON,
             'ts': ts
         }
 
@@ -88,8 +91,7 @@ class Reddit:
         latest_post = self.data
         post_time = latest_post['created_utc']
         current_time = time.time()
-        sleep_time = config['app']['sleep_time']
-        last_check_time = current_time - sleep_time
+        last_check_time = current_time - SLEEP_TIME
 
         # if the post time is larger, its newer than last check
         return True if post_time > last_check_time else False

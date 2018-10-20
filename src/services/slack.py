@@ -6,9 +6,9 @@ import requests
 with open('config.yml', 'r') as config:
     config = yaml.load(config)
 
-class Slack:
-    def __init__(self):
-        self.webhook_url = config['auth']['slack']['webhook_url']
+# module constants
+WEBHOOK_URL = config['auth']['slack']['webhook_url']
 
+class Slack:
     def post(self, message):
-        requests.post(self.webhook_url, json=message)
+        requests.post(WEBHOOK_URL, json=message)

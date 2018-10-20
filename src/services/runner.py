@@ -1,8 +1,8 @@
 #import from application
 from services.slack import Slack
+from social.instagram import Instagram
 from social.reddit import Reddit
 from social.twitter import Twitter
-from social.instagram import Instagram
 
 class Runner:
 

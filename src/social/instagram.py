@@ -10,6 +10,16 @@ import yaml
 with open('config.yml', 'r') as config:
     config = yaml.load(config)
 
+# module constants
+AUTH_URL = 'https://www.instagram.com/accounts/login/'
+AUTH_URL_MAIN = AUTH_URL + 'ajax/'
+LOGIN_USERNAME = config['auth']['instagram']['username']
+LOGIN_PASSWORD = config['auth']['instagram']['password']
+LOGIN_DICT = {'username': LOGIN_USERNAME, 'password': LOGIN_PASSWORD}
+INSTAGRAM_NAME = 'Instagram'
+INSTAGRAM_ICON = 'https://www.instagram.com/static/images/ico/apple-touch-icon-76x76-precomposed.png/4272e394f5ad.png'
+SLEEP_TIME = config['app']['sleep_time']
+
 class Instagram:
 
     def __init__(self, user):
@@ -20,21 +30,14 @@ class Instagram:
 
     def scrape(self):
 
-        # authentication variables
-        auth_url = 'https://www.instagram.com/accounts/login/'
-        auth_url_main = auth_url + 'ajax/'
-        username = config['auth']['instagram']['username']
-        password = config['auth']['instagram']['password']
-        auth = {'username': username, 'password': password}
-        headers = {'referer': "https://www.instagram.com/accounts/login/"}
-
         # use a session to store auth cookies
         with requests.Session() as session:
 
             # retrieve and set auth cookies
-            req = session.get(auth_url)
+            req = session.get(AUTH_URL)
+            headers = {'referer': "https://www.instagram.com/accounts/login/"}
             headers['x-csrftoken'] = req.cookies['csrftoken']
-            session.post(auth_url_main, data=auth, headers=headers)
+            session.post(AUTH_URL_MAIN, data=LOGIN_DICT, headers=headers)
 
             # get and store user json
             user_url = f'https://www.instagram.com/{self.user}?__a=1'
@@ -54,8 +57,6 @@ class Instagram:
         text = latest_post['edge_media_to_caption']['edges'][0]['node']['text']
         image_url = latest_post['display_url']
         thumb_url = latest_post['thumbnail_src']
-        footer = 'Instagram'
-        footer_icon = 'https://www.instagram.com/static/images/ico/apple-touch-icon-76x76-precomposed.png/4272e394f5ad.png'
         ts = latest_post['taken_at_timestamp']
         shortcode = latest_post["shortcode"]
         pretext = f'https://www.instagram.com/p/{shortcode}'
@@ -67,8 +68,8 @@ class Instagram:
             'text': text,
             'image_url': image_url,
             'thumb_url': thumb_url,
-            'footer': footer,
-            'footer_icon': footer_icon,
+            'footer': INSTAGRAM_NAME,
+            'footer_icon': INSTAGRAM_ICON,
             'ts': ts
         }
 
@@ -88,8 +89,7 @@ class Instagram:
         latest_post = self.data['edge_owner_to_timeline_media']['edges'][0]['node']
         post_time = latest_post['taken_at_timestamp']
         current_time = time.time()
-        sleep_time = config['app']['sleep_time']
-        last_check_time = current_time - sleep_time
+        last_check_time = current_time - SLEEP_TIME
 
         # if the post time is larger, its newer than last check
         return True if post_time > last_check_time else False

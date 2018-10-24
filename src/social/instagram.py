@@ -43,24 +43,20 @@ class Instagram:
 
             # request user posts
             response = session.get(user_url)
-            json = response.json()
+            data = response.json()
 
         # filter list of new posts
-        # we are only checking the first child in edge_media
-        # expected return value is list of new posts
-        post = json['graphql']['user']
-        new_posts = [post] if self._is_new(post) else []
+        posts = data['graphql']['user']['edge_owner_to_timeline_media']['edges']
+        new_posts = list(filter(self._is_new, posts))
 
         # return list of new raw posts
         return new_posts
 
-        # to-do:
-        # iterate through all edge_ownter_to_timeline_media edges
 
     def message(self, post):
 
         # storing json objects for building message
-        latest_post = post['edge_owner_to_timeline_media']['edges'][0]['node']
+        latest_post = post['node']
         author_name = latest_post['owner']['username']
         text = latest_post['edge_media_to_caption']['edges'][0]['node']['text']
         image_url = latest_post['display_url']
@@ -87,12 +83,11 @@ class Instagram:
     def _is_new(self, post):
 
         # if invalid dict return false
-        if 'edge_owner_to_timeline_media' not in post:
+        if 'taken_at_timestamp' not in post['node']:
             return False
 
         # calculate times for check
-        latest_post = post['edge_owner_to_timeline_media']['edges'][0]['node']
-        post_time = latest_post['taken_at_timestamp']
+        post_time = post['node']['taken_at_timestamp']
         current_time = time.time()
         last_check_time = current_time - SLEEP_TIME
 

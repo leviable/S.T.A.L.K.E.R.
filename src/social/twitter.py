@@ -42,7 +42,7 @@ class Twitter:
         # filter list of new posts
         new_posts = list(filter(self._is_new, posts))
 
-        # return stored data
+        # return list of new raw posts
         return new_posts
 
     def message(self, post):
@@ -51,17 +51,15 @@ class Twitter:
         tweet_id = post['id']
         author_name = post['user']['screen_name']
         text = post['full_text']
+        pretext_base = f'https://twitter.com/{author_name}/status/'
+        pretext = f'{pretext_base}{tweet_id}'
 
         # convert twitter time to epoch
         ts_twitter = post['created_at']
         ts = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
 
-        # pretext base stored for retweet
-        pretext_base = f'https://twitter.com/{author_name}/status/'
-        pretext = f'{pretext_base}{tweet_id}'
-
         # overwrite with retweet info
-        is_retweet = True if 'retweeted_status' in self.data else False
+        is_retweet = True if 'retweeted_status' in post else False
 
         if is_retweet:
             # retweet specific overwrites
@@ -69,7 +67,6 @@ class Twitter:
             author_name = f'@{author_name} - retweeted @{retweet_author}'
             text = post['retweeted_status']['full_text']
             tweet_id = post['retweeted_status']['id']
-            pretext = f'{pretext_base}{tweet_id}'
 
         # build message
         message = {

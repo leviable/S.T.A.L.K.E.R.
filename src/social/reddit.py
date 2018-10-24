@@ -77,6 +77,7 @@ class Reddit:
             'ts': ts
         }
 
+        # return formatted messag
         return message
 
     def _is_new(self, post):

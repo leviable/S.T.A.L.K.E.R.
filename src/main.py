@@ -19,25 +19,22 @@ def main():
     social_channels = config['social_channels']
     sleep_time = config['app']['sleep_time']
     slack = Slack()
-    start_message = { 'text': 'now stalking...' }
-    exit_message = { 'text': 'ending stalk...' }
+    start_message = 'now stalking...'
+    exit_message = 'ending stalk...'
 
     # output running status
-    slack.post(start_message)
+    slack.post({ 'text': start_message })
 
     # loop through runners until killed
     while True:
         try:
             # start cycle of runners
             initialize_runners(social_channels)
-
             # wait for next cycle
             time.sleep(sleep_time)
-
         except KeyboardInterrupt:
             # output ending status
-            slack.post(exit_message)
-
+            slack.post({ 'text': exit_message })
             # graceful exit
             sys.exit(0)
 

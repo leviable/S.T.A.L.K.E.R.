@@ -1,8 +1,8 @@
 #import from application
 from services.slack import Slack
-from social.instagram import Instagram
 from social.reddit import Reddit
 from social.twitter import Twitter
+from social.instagram import Instagram
 
 class Runner:
 
@@ -15,6 +15,9 @@ class Runner:
 
     def stalk(self):
 
+        # fallback if scrape fails
+        post_list = []
+
         # run social channel specific methods
         if self.channel == 'reddit':
             social = Reddit(self.user)
@@ -25,15 +28,15 @@ class Runner:
         else:
             return
 
+        # attempt scrape and append to post_list
         try:
-            # attempt scrape
-            social.scrape()
+            new_posts = social.scrape()
+            post_list = post_list + new_posts
         except Exception as e:
-            # report error
             self.slack.post({ 'text': e })
 
-        # if post is new build message
-        # and post to slack
-        if social.is_new():
-            message = social.message()
+        # Iterate through posts returned from scrape
+        # if post is new build message and post to slack
+        for post in post_list:
+            message = social.message(post)
             self.slack.post(message)

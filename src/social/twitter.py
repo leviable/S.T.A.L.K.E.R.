@@ -20,6 +20,7 @@ TWITTER_API_TIMELINE_PATH = 'statuses/user_timeline.json'
 TWITTER_NAME = 'Twitter'
 TWITTER_ICON = 'https://abs.twimg.com/favicons/favicon.ico'
 TWITTER_TS_PATTERN = '%a %b %d %H:%M:%S %z %Y'
+TWITTER_MESSAGE_REQUEST_COUNT = 10
 
 class Twitter:
 
@@ -28,32 +29,31 @@ class Twitter:
         # build client and class props
         self.client = Client(API_KEY, SECRET_KEY)
         self.user = user
-        self.data = {}
 
     def scrape(self):
 
         # build request url
-        params = f'screen_name={self.user}&count=1&tweet_mode=extended'
+        params = f'screen_name={self.user}&count={TWITTER_MESSAGE_REQUEST_COUNT}&tweet_mode=extended'
         url = f'{TWITTER_API_URL}{TWITTER_API_TIMELINE_PATH}?{params}'
 
-        # request users json
-        response = self.client.request(url)
-        self.data = response[0]
+        # request users posts
+        posts = self.client.request(url)
+
+        # filter list of new posts
+        new_posts = list(filter(self._is_new, posts))
 
         # return stored data
-        return self.data
+        return new_posts
 
-    def message(self):
+    def message(self, post):
 
         # storing json objects for building message
-        output = { 'attachments': [] }
-        latest_post = self.data
-        tweet_id = latest_post['id']
-        author_name = latest_post['user']['screen_name']
-        text = latest_post['full_text']
+        tweet_id = post['id']
+        author_name = post['user']['screen_name']
+        text = post['full_text']
 
         # convert twitter time to epoch
-        ts_twitter = latest_post['created_at']
+        ts_twitter = post['created_at']
         ts = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
 
         # pretext base stored for retweet
@@ -65,10 +65,10 @@ class Twitter:
 
         if is_retweet:
             # retweet specific overwrites
-            retweet_author = latest_post['retweeted_status']['user']['screen_name']
+            retweet_author = post['retweeted_status']['user']['screen_name']
             author_name = f'@{author_name} - retweeted @{retweet_author}'
-            text = latest_post['retweeted_status']['full_text']
-            tweet_id = latest_post['retweeted_status']['id']
+            text = post['retweeted_status']['full_text']
+            tweet_id = post['retweeted_status']['id']
             pretext = f'{pretext_base}{tweet_id}'
 
         # build message
@@ -81,22 +81,18 @@ class Twitter:
             'ts': ts
         }
 
-        # append message to slack attachments field
-        output['attachments'].append(message)
-
         # return formatted message
-        return output
+        return message
 
-    def is_new(self):
+    def _is_new(self, post):
 
         # if invalid dict return false
-        if 'created_at' not in self.data:
+        if 'created_at' not in post:
             return False
 
         # calculate times for check
-        latest_post = self.data
-        ts_twitter = latest_post['created_at']
-        post_time = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
+        twitter_ts = post['created_at']
+        post_time = int(time.mktime(time.strptime(twitter_ts, TWITTER_TS_PATTERN)))
         current_time = time.time()
         last_check_time = current_time - SLEEP_TIME
 

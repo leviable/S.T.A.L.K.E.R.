@@ -26,7 +26,6 @@ class Instagram:
 
         # initialize class props
         self.user = user
-        self.data = {}
 
     def scrape(self):
 
@@ -39,20 +38,29 @@ class Instagram:
             headers['x-csrftoken'] = req.cookies['csrftoken']
             session.post(AUTH_URL_MAIN, data=LOGIN_DICT, headers=headers)
 
-            # get and store user json
+            # build request url
             user_url = f'https://www.instagram.com/{self.user}?__a=1'
+
+            # request user posts
             response = session.get(user_url)
             json = response.json()
-            self.data = json['graphql']['user']
 
-        # return stored data
-        return self.data
+        # filter list of new posts
+        # we are only checking the first child in edge_media
+        # expected return value is list of new posts
+        post = json['graphql']['user']
+        new_posts = [post] if self._is_new(post) else []
 
-    def message(self):
+        # return list of new raw posts
+        return new_posts
+
+        # to-do:
+        # iterate through all edge_ownter_to_timeline_media edges
+
+    def message(self, post):
 
         # storing json objects for building message
-        output = { 'attachments': [] }
-        latest_post = self.data['edge_owner_to_timeline_media']['edges'][0]['node']
+        latest_post = post['edge_owner_to_timeline_media']['edges'][0]['node']
         author_name = latest_post['owner']['username']
         text = latest_post['edge_media_to_caption']['edges'][0]['node']['text']
         image_url = latest_post['display_url']
@@ -73,20 +81,17 @@ class Instagram:
             'ts': ts
         }
 
-        # append message to slack attachments field
-        output['attachments'].append(message)
-
         # return formatted message
-        return output
+        return message
 
-    def is_new(self):
+    def _is_new(self, post):
 
         # if invalid dict return false
-        if 'edge_owner_to_timeline_media' not in self.data:
+        if 'edge_owner_to_timeline_media' not in post:
             return False
 
         # calculate times for check
-        latest_post = self.data['edge_owner_to_timeline_media']['edges'][0]['node']
+        latest_post = post['edge_owner_to_timeline_media']['edges'][0]['node']
         post_time = latest_post['taken_at_timestamp']
         current_time = time.time()
         last_check_time = current_time - SLEEP_TIME

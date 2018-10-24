@@ -21,45 +21,47 @@ class Reddit:
 
         # initialize class props
         self.user = user
-        self.data = {}
 
     def scrape(self):
 
-        # use unique headers for reddit throttling
+        # build request url
         url = f'https://www.reddit.com/user/{self.user}.json'
 
-        # request users json
+        # request users posts
+        # use unique headers for reddit throttling
         response = requests.get(url, headers=REQ_HEADERS)
         json = response.json()
-        self.data = json['data']['children'][0]['data']
 
-        # return stored data
-        return self.data
+        # filter list of new posts
+        posts = json['data']['children']
+        new_posts = list(filter(self._is_new, posts))
 
-    def message(self):
+        # return list of new raw posts
+        return new_posts
+
+    def message(self, post):
 
         # storing json objects for building message
-        output = { 'attachments': [] }
-        latest_post = self.data
-        screen_name = latest_post['author']
+        post_data = post['data']
+        screen_name = post_data['author']
         author_name = f'u/{screen_name}'
-        footer = latest_post['subreddit_name_prefixed']
-        ts = latest_post['created_utc']
-        permalink = latest_post["permalink"]
+        footer = post_data['subreddit_name_prefixed']
+        ts = post_data['created_utc']
+        permalink = post_data["permalink"]
         pretext = f'https://reddit.com{permalink}'
 
-        # if post_hint exists, use submission keys
-        if 'post_hint' in latest_post:
-            title = latest_post['title']
-            title_link = latest_post['url']
-            text = latest_post['selftext']
-            thumb_url = latest_post['thumbnail']
+        # if post_data_hint exists, use submission keys
+        if 'post_data_hint' in post_data:
+            title = post_data['title']
+            title_link = post_data['url']
+            text = post_data['selftext']
+            thumb_url = post_data['thumbnail']
 
         # else use comment keys
         else:
-            title = latest_post['link_title']
-            title_link = latest_post['link_url']
-            text = latest_post['body']
+            title = post_data['link_title']
+            title_link = post_data['link_url']
+            text = post_data['body']
             thumb_url = ''
 
         # build message
@@ -75,21 +77,16 @@ class Reddit:
             'ts': ts
         }
 
-        # append message to slack attachments field
-        output['attachments'].append(message)
+        return message
 
-        # return formatted message
-        return output
-
-    def is_new(self):
+    def _is_new(self, post):
 
         # if invalid dict return false
-        if 'created_utc' not in self.data:
+        if 'created_utc' not in post['data']:
             return False
 
         # calculate times for check
-        latest_post = self.data
-        post_time = latest_post['created_utc']
+        post_time = post['data']['created_utc']
         current_time = time.time()
         last_check_time = current_time - SLEEP_TIME
 

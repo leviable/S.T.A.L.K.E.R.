@@ -11,4 +11,5 @@ WEBHOOK_URL = config['auth']['slack']['webhook_url']
 
 class Slack:
     def post(self, message):
-        requests.post(WEBHOOK_URL, json=message)
+        output = { 'attachments': [message] }
+        requests.post(WEBHOOK_URL, json=output)

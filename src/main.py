@@ -6,7 +6,7 @@ import sys
 import yaml
 
 # import from app
-from services.slack import Slack
+from services.messaging import Messaging
 from services.runner import Runner
 
 def main():
@@ -18,12 +18,12 @@ def main():
     # variable declerations
     social_channels = config['social_channels']
     sleep_time = config['app']['sleep_time']
-    slack = Slack()
+    messaging = Messaging()
     start_message = 'now stalking...'
     exit_message = 'ending stalk...'
 
     # output running status
-    slack.post({ 'text': start_message })
+    messaging.post({ 'text': start_message })
 
     # loop through runners until killed
     while True:
@@ -34,7 +34,7 @@ def main():
             time.sleep(sleep_time)
         except KeyboardInterrupt:
             # output ending status
-            slack.post({ 'text': exit_message })
+            messaging.post({ 'text': exit_message })
             # graceful exit
             sys.exit(0)
 

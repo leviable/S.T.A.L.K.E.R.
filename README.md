@@ -6,10 +6,6 @@ Application to track social media posts based on usernames with a goal to suppor
 
 This project was created as a learning exercise for Python, consuming REST APIs, and general application architecture and testing.
 
-### Author
-
-Mike Dunn is a senior Front-end Developer with 5+ years of professional experience. Seeking to help deliver high quality applications through excellent coding practices and technical leadership. Specializing in semantics, optimization and system design.
-
 ### Application Structure
 
 `/services/messaging.py` - Messaging service that delivers the social classes formatted message
@@ -50,3 +46,7 @@ Coming Soon
 ### Testing
 
 Coming Soon
+
+### Author
+
+Mike Dunn is a senior Front-end Developer with 5+ years of professional experience. Seeking to help deliver high quality applications through excellent coding practices and technical leadership. Specializing in semantics, optimization and system design.

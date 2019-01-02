@@ -7,7 +7,7 @@ with open('LICENSE.txt') as f:
     license = f.read()
 
 setup(
-    name='S.T.A.L.K.E.R.',
+    name='STALKER',
     version='0.0.1',
     description='Slackbot for following users on social platforms',
     long_description=readme,
@@ -15,5 +15,10 @@ setup(
     author_email='mikey.dunn@yahoo.com',
     url='https://github.com/MikeyDunn/S.T.A.L.K.E.R.',
     license=license,
-    packages=find_packages()
+    packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'stalker=src.main:main',
+        ]
+    }
 )

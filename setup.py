@@ -7,7 +7,7 @@ with open('LICENSE.txt') as f:
     license = f.read()
 
 setup(
-    name='S.T.A.L.K.E.R.',
+    name='STALKER',
     version='0.0.1',
     description='Slackbot for following users on social platforms',
     long_description=readme,

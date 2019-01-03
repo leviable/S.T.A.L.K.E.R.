@@ -6,15 +6,11 @@ import sys
 import yaml
 
 # import from app
-from services.messaging import Messaging
-from services.runner import Runner
+from .services.messaging import Messaging
+from .services.runner import Runner
+from . import config
 
 def main():
-
-    # import config
-    with open('config.yml', 'r') as config:
-        config = yaml.load(config)
-
     # variable declerations
     social_channels = config['social_channels']
     sleep_time = config['app']['sleep_time']
@@ -47,4 +43,5 @@ def initialize_runners(social_channels):
                 runner = Runner(channel, user)
                 runner.stalk()
 
-main()
+if __name__ == "__main__":
+    main()

@@ -8,8 +8,7 @@ import requests
 import yaml
 
 # import config
-with open('config.yml', 'r') as config:
-    config = yaml.load(config)
+from .. import config
 
 # module constants
 API_KEY = config['auth']['twitter']['api_key']

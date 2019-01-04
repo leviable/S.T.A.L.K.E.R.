@@ -10,7 +10,7 @@ build:
 .PHONY: run
 run:
 	docker run --rm -it \
-		-v $(MAKEFILE_DIR)/config.yml:/app/src/config.yml \
+		-v $(MAKEFILE_DIR)/config.yml:/app/config.yml \
 		$(DOCKER_REPO):local \
 		stalker
 

@@ -6,15 +6,12 @@ import sys
 import yaml
 
 # import from app
-from services.messaging import Messaging
-from services.runner import Runner
+from .services.messaging import Messaging
+from .services.runner import Runner
+from . import config
+
 
 def main():
-
-    # import config
-    with open('config.yml', 'r') as config:
-        config = yaml.load(config)
-
     # variable declerations
     social_channels = config['social_channels']
     sleep_time = config['app']['sleep_time']
@@ -26,17 +23,21 @@ def main():
     messaging.post({ 'text': start_message })
 
     # loop through runners until killed
-    while True:
-        try:
+    try:
+        while True:
             # start cycle of runners
             initialize_runners(social_channels)
             # wait for next cycle
             time.sleep(sleep_time)
-        except KeyboardInterrupt:
-            # output ending status
-            messaging.post({ 'text': exit_message })
-            # graceful exit
-            sys.exit(0)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        # output ending status
+        messaging.post({ 'text': exit_message })
+
+    # graceful exit
+    sys.exit(0)
+
 
 def initialize_runners(social_channels):
 
@@ -47,4 +48,5 @@ def initialize_runners(social_channels):
                 runner = Runner(channel, user)
                 runner.stalk()
 
-main()
+if __name__ == "__main__":
+    main()

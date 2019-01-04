@@ -15,5 +15,10 @@ setup(
     author_email='mikey.dunn@yahoo.com',
     url='https://github.com/MikeyDunn/S.T.A.L.K.E.R.',
     license=license,
-    packages=find_packages()
+    packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'stalker=src.main:main',
+        ]
+    }
 )

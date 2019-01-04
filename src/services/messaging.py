@@ -3,8 +3,7 @@ import yaml
 import requests
 
 # import config
-with open('config.yml', 'r') as config:
-    config = yaml.load(config)
+from .. import config
 
 # module constants
 SLACK_WEBHOOK_URL = config['auth']['slack']['webhook_url']

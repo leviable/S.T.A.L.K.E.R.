@@ -7,8 +7,7 @@ import requests
 import yaml
 
 # import config
-with open('config.yml', 'r') as config:
-    config = yaml.load(config)
+from .. import config
 
 # module constants
 REDDIT_ICON = 'https://www.redditstatic.com/desktop2x/img/favicon/favicon-32x32.png'

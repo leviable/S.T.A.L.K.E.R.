@@ -1,8 +1,8 @@
 #import from application
-from services.messaging import Messaging
-from social.reddit import Reddit
-from social.twitter import Twitter
-from social.instagram import Instagram
+from .messaging import Messaging
+from ..social.reddit import Reddit
+from ..social.twitter import Twitter
+from ..social.instagram import Instagram
 
 class Runner:
 

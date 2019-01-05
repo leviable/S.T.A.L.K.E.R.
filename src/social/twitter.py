@@ -38,10 +38,12 @@ class Twitter:
         posts = self.client.request(url)
 
         # filter list of new posts
+        # reverse posts for correct chronological posting order
         new_posts = list(filter(self._is_new, posts))
+        new_posts_reversed = list(reversed(new_posts))
 
         # return list of new raw posts
-        return new_posts
+        return new_posts_reversed
 
     def message(self, post):
 

@@ -62,3 +62,4 @@ Mike Dunn is a senior Front-end Developer with 5+ years of professional experien
 ### Contributors
 
 [Levi Noecker](https://github.com/levi-rs)
+[Eric McBride](https://github.com/ericmcbride)

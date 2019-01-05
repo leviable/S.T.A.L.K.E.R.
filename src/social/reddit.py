@@ -29,12 +29,12 @@ class Reddit:
         # request users posts
         # use unique headers for reddit throttling
         response = requests.get(url, headers=REQ_HEADERS)
+        response.raise_for_status()
         json = response.json()
 
         # filter list of new posts
         posts = json['data']['children']
         new_posts = list(filter(self._is_new, posts))
-
         # return list of new raw posts
         return new_posts
 

@@ -5,3 +5,4 @@ PyYAML==3.13
 requests==2.20.0
 twitter-application-only-auth==0.3.3
 urllib3==1.24
+pytest==4.0.2

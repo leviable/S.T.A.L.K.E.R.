@@ -13,7 +13,7 @@ class Messaging:
 
         try:
             # attempt to post to slack
-            output = { 'attachments': [message] }
+            output = message
             requests.post(SLACK_WEBHOOK_URL, json=output)
         except:
             # on error print message to console

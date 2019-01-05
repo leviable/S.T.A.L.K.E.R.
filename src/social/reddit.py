@@ -65,15 +65,17 @@ class Reddit:
 
         # build message
         message = {
-            'pretext': pretext,
-            'author_name': author_name,
-            'title': title,
-            'title_link': title_link,
-            'text': text,
-            'thumb_url': thumb_url,
-            'footer': footer,
-            'footer_icon': REDDIT_ICON,
-            'ts': ts
+            'attachments': [{
+                'pretext': pretext,
+                'author_name': author_name,
+                'title': title,
+                'title_link': title_link,
+                'text': text,
+                'thumb_url': thumb_url,
+                'footer': footer,
+                'footer_icon': REDDIT_ICON,
+                'ts': ts
+            }]
         }
 
         # return formatted messag

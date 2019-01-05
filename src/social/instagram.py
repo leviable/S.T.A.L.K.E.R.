@@ -15,8 +15,6 @@ AUTH_URL_MAIN = AUTH_URL + 'ajax/'
 LOGIN_USERNAME = config['auth']['instagram']['username']
 LOGIN_PASSWORD = config['auth']['instagram']['password']
 LOGIN_DICT = {'username': LOGIN_USERNAME, 'password': LOGIN_PASSWORD}
-INSTAGRAM_NAME = 'Instagram'
-INSTAGRAM_ICON = 'https://www.instagram.com/static/images/ico/apple-touch-icon-76x76-precomposed.png/4272e394f5ad.png'
 SLEEP_TIME = config['app']['sleep_time']
 
 class Instagram:
@@ -56,24 +54,14 @@ class Instagram:
 
         # storing json objects for building message
         latest_post = post['node']
-        author_name = latest_post['owner']['username']
-        text = latest_post['edge_media_to_caption']['edges'][0]['node']['text']
-        image_url = latest_post['display_url']
-        thumb_url = latest_post['thumbnail_src']
-        ts = latest_post['taken_at_timestamp']
         shortcode = latest_post["shortcode"]
-        pretext = f'https://www.instagram.com/p/{shortcode}'
+        text = f'https://www.instagram.com/p/{shortcode}'
 
         # build message
         message = {
-            'pretext': pretext,
-            'author_name': author_name,
             'text': text,
-            'image_url': image_url,
-            'thumb_url': thumb_url,
-            'footer': INSTAGRAM_NAME,
-            'footer_icon': INSTAGRAM_ICON,
-            'ts': ts
+            'unfurl_links': True,
+            'unfurl_media': True
         }
 
         # return formatted message

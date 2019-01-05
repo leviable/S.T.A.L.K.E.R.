@@ -16,8 +16,6 @@ SECRET_KEY = config['auth']['twitter']['secret_key']
 SLEEP_TIME = config['app']['sleep_time']
 TWITTER_API_URL = 'https://api.twitter.com/1.1/'
 TWITTER_API_TIMELINE_PATH = 'statuses/user_timeline.json'
-TWITTER_NAME = 'Twitter'
-TWITTER_ICON = 'https://abs.twimg.com/favicons/favicon.ico'
 TWITTER_TS_PATTERN = '%a %b %d %H:%M:%S %z %Y'
 TWITTER_MESSAGE_REQUEST_COUNT = 10
 
@@ -48,33 +46,15 @@ class Twitter:
 
         # storing json objects for building message
         tweet_id = post['id']
-        author_name = post['user']['screen_name']
-        text = post['full_text']
-        pretext_base = f'https://twitter.com/{author_name}/status/'
-        pretext = f'{pretext_base}{tweet_id}'
-
-        # convert twitter time to epoch
-        ts_twitter = post['created_at']
-        ts = int(time.mktime(time.strptime(ts_twitter, TWITTER_TS_PATTERN)))
-
-        # overwrite with retweet info
-        is_retweet = True if 'retweeted_status' in post else False
-
-        if is_retweet:
-            # retweet specific overwrites
-            retweet_author = post['retweeted_status']['user']['screen_name']
-            author_name = f'@{author_name} - retweeted @{retweet_author}'
-            text = post['retweeted_status']['full_text']
-            tweet_id = post['retweeted_status']['id']
+        screen_name = post['user']['screen_name']
+        author_link = f'https://twitter.com/{screen_name}'
+        text = f'{author_link}/status/{tweet_id}'
 
         # build message
         message = {
-            'pretext': pretext,
-            'author_name': author_name,
             'text': text,
-            'footer': TWITTER_NAME,
-            'footer_icon': TWITTER_ICON,
-            'ts': ts
+            'unfurl_links': True,
+            'unfurl_media': True
         }
 
         # return formatted message

@@ -19,3 +19,9 @@ shell:
 	docker run --rm -it \
 		$(DOCKER_REPO):local \
 		ash
+
+.PHONY: test
+test:
+		docker run --rm -it \
+		$(DOCKER_REPO):local \
+		pytest

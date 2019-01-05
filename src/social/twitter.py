@@ -11,8 +11,6 @@ import yaml
 from .. import config
 
 # module constants
-API_KEY = config['auth']['twitter']['api_key']
-SECRET_KEY = config['auth']['twitter']['secret_key']
 SLEEP_TIME = config['app']['sleep_time']
 TWITTER_API_URL = 'https://api.twitter.com/1.1/'
 TWITTER_API_TIMELINE_PATH = 'statuses/user_timeline.json'
@@ -23,8 +21,11 @@ class Twitter:
 
     def __init__(self, user):
 
+        api_key = config['auth']['twitter']['api_key']
+        secret_key = config['auth']['twitter']['secret_key']
+
         # build client and class props
-        self.client = Client(API_KEY, SECRET_KEY)
+        self.client = Client(api_key, secret_key)
         self.user = user
 
     def scrape(self):

@@ -12,9 +12,6 @@ from .. import config
 # module constants
 AUTH_URL = 'https://www.instagram.com/accounts/login/'
 AUTH_URL_MAIN = AUTH_URL + 'ajax/'
-LOGIN_USERNAME = config['auth']['instagram']['username']
-LOGIN_PASSWORD = config['auth']['instagram']['password']
-LOGIN_DICT = {'username': LOGIN_USERNAME, 'password': LOGIN_PASSWORD}
 SLEEP_TIME = config['app']['sleep_time']
 
 class Instagram:
@@ -29,11 +26,16 @@ class Instagram:
         # use a session to store auth cookies
         with requests.Session() as session:
 
+            # login information
+            login_username = config['auth']['instagram']['username']
+            login_password = config['auth']['instagram']['password']
+            login_dict = {'username': login_username, 'password': login_password}
+
             # retrieve and set auth cookies
             req = session.get(AUTH_URL)
             headers = {'referer': "https://www.instagram.com/accounts/login/"}
             headers['x-csrftoken'] = req.cookies['csrftoken']
-            session.post(AUTH_URL_MAIN, data=LOGIN_DICT, headers=headers)
+            session.post(AUTH_URL_MAIN, data=login_dict, headers=headers)
 
             # build request url
             user_url = f'https://www.instagram.com/{self.user}?__a=1'
